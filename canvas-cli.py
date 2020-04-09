@@ -12,9 +12,10 @@ def load_config(config_file):
             print(exc)
 
 
-def fetchAssignments(canvasDomain, courseId):
+def fetchAssignments(canvasDomain, canvasToken, courseId):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignments"
-    assignments = requests.get(url)
+    HEADERS = {'Authorization': "Bearer "+canvasToken}
+    assignments = requests.get(url, headers=HEADERS)
     print(assignments.text)
 
 def main():
@@ -25,12 +26,13 @@ def main():
         conf = yaml.safe_load(stream)
 
     canvasDomain = str(conf['default']['canvasdomain'])
+    canvasToken = str(conf['default']['canvastoken'])
     print("Domain: "+canvasDomain)
 
     courses = []
     for course in conf['courses']:
         courses.append(course)
 
-    fetchAssignments(canvasDomain, courses[0])
+    fetchAssignments(canvasDomain, canvasToken, courses[0])
 
 main()
