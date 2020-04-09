@@ -1,4 +1,5 @@
 import yaml
+import json
 import requests
 import io
 
@@ -15,8 +16,11 @@ def load_config(config_file):
 def fetchAssignments(canvasDomain, canvasToken, courseId):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignments"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
-    assignments = requests.get(url, headers=HEADERS)
-    print(assignments.text)
+    assignmentsRAW = requests.get(url, headers=HEADERS)
+    #  print(assignmentsRAW.json())
+
+    for i in assignmentsRAW.json():
+        print(i['name'])
 
 def main():
 
@@ -27,7 +31,6 @@ def main():
 
     canvasDomain = str(conf['default']['canvasdomain'])
     canvasToken = str(conf['default']['canvastoken'])
-    print("Domain: "+canvasDomain)
 
     courses = []
     for course in conf['courses']:
