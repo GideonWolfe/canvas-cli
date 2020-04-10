@@ -12,15 +12,29 @@ def load_config(config_file):
         except yaml.YAMLError as exc:
             print(exc)
 
+def fetchCourses(canvasDomain, canvasToken):
+    url = canvasDomain+"api/v1/courses"
+    HEADERS = {'Authorization': "Bearer "+canvasToken}
+    PARAMS = {'enrollment_state':'active'}
+    coursesRAW = requests.get(url, params=PARAMS, headers=HEADERS)
+    courses = coursesRAW.json()
+    print(len(courses))
+
+    for course in courses:
+        print(course['name'])
+
+    #  for attr in courses[0].values():
+        #  print(attr)
+
 
 def fetchAssignments(canvasDomain, canvasToken, courseId):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignments"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
     assignmentsRAW = requests.get(url, headers=HEADERS)
-    #  print(assignmentsRAW.json())
-
-    for i in assignmentsRAW.json():
-        print(i['name'])
+    assignments = assignmentsRAW.json()
+    for assignment in assignments:
+        print(assignment['name'])
+    return(assignments)
 
 def main():
 
@@ -36,6 +50,7 @@ def main():
     for course in conf['courses']:
         courses.append(course)
 
-    fetchAssignments(canvasDomain, canvasToken, courses[0])
+    #  fetchAssignments(canvasDomain, canvasToken, courses[0])
+    fetchCourses(canvasDomain, canvasToken)
 
 main()
