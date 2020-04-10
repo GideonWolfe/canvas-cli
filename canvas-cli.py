@@ -29,9 +29,9 @@ def fetchCourseIDs(canvasDomain, canvasToken):
     courses = fetchActiveCourses(canvasDomain, canvasToken)
     courseIds = {}
     for course in courses:
-        courseIds.update({course['name']:course['id']})
-        #  courseIds['name'] = course['name']
-        #  courseIds['id'] = course['id']
+        # Remove stray ended courses
+        if not course['end_at']:
+            courseIds.update({course['name']:course['id']})
     return(courseIds)
 
 # Returns a JSON array of assignments for a given course
