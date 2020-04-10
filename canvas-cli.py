@@ -43,10 +43,13 @@ def fetchAssignments(canvasDomain, canvasToken, courseId):
     return(assignments)
 
 # Prints list of assignments for a given course
-def listAssignments(canvasDomain, canvasToken, courseId):
+def listAssignments(canvasDomain, canvasToken, courseId, summary=False):
     assignments = fetchAssignments(canvasDomain, canvasToken, courseId)
     for assignment in assignments:
-        print(assignment['name'])
+        if summary:
+            print(" • "+assignment['name'])
+        else:
+            print(assignment['name'])
 
 # Prints a list of active courses
 def listActiveCourses(canvasDomain, canvasToken):
@@ -64,15 +67,13 @@ def assignmentSummary(canvasDomain, canvasToken):
     #  print(courses.keys())
     for course in courses:
         print("\u0332".join(course))
-        listAssignments(canvasDomain, canvasToken, courses[course])
+        listAssignments(canvasDomain, canvasToken, courses[course], True)
 
 def parseArgs():
 
     canvasDomain = str(conf['default']['canvasdomain'])
     canvasToken = str(conf['default']['canvastoken'])
     courses = fetchCourseIDs(canvasDomain, canvasToken).keys
-    #  for course in conf['courses']:
-        #  courses.append(course)
 
     if len(sys.argv) <= 1:
         print("No arguments supplied")
