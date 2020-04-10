@@ -12,7 +12,7 @@ def load_config(config_file):
         except yaml.YAMLError as exc:
             print(exc)
 
-def fetchCourses(canvasDomain, canvasToken):
+def fetchActiveCourses(canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
     PARAMS = {'enrollment_state':'active'}
@@ -51,6 +51,6 @@ def main():
         courses.append(course)
 
     #  fetchAssignments(canvasDomain, canvasToken, courses[0])
-    fetchCourses(canvasDomain, canvasToken)
+    fetchActiveCourses(canvasDomain, canvasToken)
 
 main()
