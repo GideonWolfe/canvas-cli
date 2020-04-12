@@ -1,8 +1,23 @@
+#!/usr/bin/python3
+
+from tabulate import tabulate
 import yaml
 import json
 import requests
 import io
 import sys
+
+# ANSI escape sequences to format output
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 
 conf = {}
 # Load config file
@@ -12,6 +27,11 @@ def load_config(config_file):
             return yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
+
+def printError(errorMessage):
+    print(f"{bcolors.WARNING}ERROR:{bcolors.ENDC} " + errorMessage)
+
+
 
 # Returns a JSON array with the users active courses
 def fetchActiveCourses(canvasDomain, canvasToken):
@@ -51,6 +71,17 @@ def listAssignments(canvasDomain, canvasToken, courseId, summary=False):
         else:
             print(assignment['name'])
 
+# Prints list of assignments for a given course
+def listAssignmentsTable(canvasDomain, canvasToken, courseId):
+    assignments = fetchAssignments(canvasDomain, canvasToken, courseId)
+    tableData = []
+    HEADERS=["ID", "Name"]
+    for assignment in assignments:
+        fullName = assignment['name']
+        ID = assignment['id']
+        tableData.append((ID, fullName))
+    print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
+
 # Prints a list of active courses
 def listActiveCourses(canvasDomain, canvasToken):
     courses = fetchActiveCourses(canvasDomain, canvasToken)
@@ -60,6 +91,20 @@ def listActiveCourses(canvasDomain, canvasToken):
         endDate = course['end_at']
         if not endDate:
             print("[ID: "+str(courseId)+"] "+fullName)
+
+# Prints a list of active courses in a table
+def listActiveCoursesTable(canvasDomain, canvasToken):
+    courses = fetchActiveCourses(canvasDomain, canvasToken)
+    tableData = []
+    HEADERS=["ID", "Name"]
+    for course in courses:
+        fullName = course['name']
+        courseId = course['id']
+        endDate = course['end_at']
+        if not endDate:
+            tableData.append((courseId, fullName))
+    print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
+
 
 # Prints a list of active courses and their outstanding assignments
 def assignmentSummary(canvasDomain, canvasToken):
@@ -79,19 +124,18 @@ def parseArgs():
         print("No arguments supplied")
     elif sys.argv[1] == "list":
         if len(sys.argv) < 3:
-            #  print("\033[4mList what?\033[0m")
-            print("\u0332".join("List What?"))
-            print("courses")
-            print("assignments <course id>")
+            printError("List What?")
         elif sys.argv[2] == "courses":
             print("Listing courses")
-            listActiveCourses(canvasDomain, canvasToken)
+            listActiveCoursesTable(canvasDomain, canvasToken)
+            #  listActiveCourses(canvasDomain, canvasToken)
         elif sys.argv[2] =="assignments":
             if len(sys.argv) < 4:
-                print("Please supply a course ID")
-                listActiveCourses(canvasDomain, canvasToken)
+                printError("Please supply a course ID")
+                listActiveCoursesTable(canvasDomain, canvasToken)
             else:
-                listAssignments(canvasDomain, canvasToken, sys.argv[3])
+                listAssignmentsTable(canvasDomain, canvasToken, sys.argv[3])
+                #  listAssignments(canvasDomain, canvasToken, sys.argv[3])
     elif sys.argv[1] == "summary":
         assignmentSummary(canvasDomain, canvasToken)
 
