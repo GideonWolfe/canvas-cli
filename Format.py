@@ -94,14 +94,19 @@ def formatScore(assignment, percentage=False):
             scoreString = f"{bcolors.OKBLUE}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
     elif score >= .70:
         if percentage == True:
+            scoreString = f"{bcolors.YELLOW}"+str(percentage)+f"%{bcolors.ENDC}"
+        else:
+            scoreString = f"{bcolors.YELLOW}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
+    elif score >= .60:
+        if percentage == True:
             scoreString = f"{bcolors.WARNING}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
             scoreString = f"{bcolors.WARNING}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
     else:
         if percentage == True:
-            scoreString = f"{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
+            scoreString = f"{bcolors.BLINK}{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
-            scoreString = f"{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
+            scoreString = f"{bcolors.BLINK}{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
 
     return(scoreString)
 
