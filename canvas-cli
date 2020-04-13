@@ -32,7 +32,8 @@ def chooseAssignment(courseId):
     tableData = []
     i = 0
     for assignment in assignments:
-        idDict.update({i:(assignment['id'], assignment['name'], assignment['submissions_download_url'])})
+        #  print(assignment)
+        idDict.update({i:(assignment['id'], assignment['name'], assignment['submission']['preview_url'])})
         i += 1
     for num in idDict.keys():
         tableData.append([num, idDict[num][1]])
