@@ -30,9 +30,18 @@ def fetchAssignments(courseId, canvasDomain, canvasToken):
     assignments = assignmentsRAW.json()
     return(assignments)
 
+# Returns a JSON array of assignments for a given course
+def fetchFiles(courseId, canvasDomain, canvasToken):
+    url = canvasDomain+"api/v1/courses/"+str(courseId)+"/files"
+    HEADERS = {'Authorization': "Bearer "+canvasToken}
+    filesRAW = requests.get(url, headers=HEADERS)
+    files = filesRAW.json()
+    return(files)
 
-def fetchFile(assignment):
-    url = assignment[2]
-    #  print(url)
-    #  response = requests.get(url)
-    #  print(response.text)
+
+
+def downloadFile(classFile):
+    response = requests.get(classFile[1])
+    filePath = './'+classFile[0]
+    with open(filePath, 'wb') as f:
+        f.write(response.content)
