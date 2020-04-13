@@ -5,7 +5,7 @@ def fetchActiveCourses(canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
     PARAMS = {'enrollment_state':'active',
-              'include': 'course_progress',
+              'include': ['course_progress', 'concluded'],
               'exclude_blueprint_courses':'true'}
     coursesRAW = requests.get(url, params=PARAMS, headers=HEADERS)
     courses = coursesRAW.json()
