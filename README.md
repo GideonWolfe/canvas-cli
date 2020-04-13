@@ -16,7 +16,7 @@ default: &default
 
 Here are the current working actions:
 
-`list`
+`-list`
   * `courses`
   * `assignments` `<courseid>`
  

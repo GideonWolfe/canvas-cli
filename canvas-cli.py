@@ -8,6 +8,7 @@ import json
 import requests
 import io
 import sys
+import argparse
 
 # ANSI escape sequences to format output
 class bcolors:
@@ -199,29 +200,44 @@ def assignmentSummary():
 
 def parseArgs():
 
-    #  canvasDomain = str(conf['default']['canvasdomain'])
-    #  canvasToken = str(conf['default']['canvastoken'])
-    courses = fetchCourseIDs().keys
+    args = argparse.ArgumentParser(
+        description='A light-weight command-line interface for canvas.')
+    args.add_argument('-list', choices=['courses', 'assignments'], help='List either courses or assignments')
+    args.add_argument('-courseID', type=int, help='If you know the ID of your course, add it here to speed up the search')
+    args.add_argument('-summary', action='store_true', help='print a summary of courses')
+    args = args.parse_args()
 
-    if len(sys.argv) <= 1:
-        print("No arguments supplied")
-    elif sys.argv[1] == "list":
-        if len(sys.argv) < 3:
-            printError("List What?")
-        elif sys.argv[2] == "courses":
-            listActiveCoursesTable()
-            #  listActiveCourses(canvasDomain, canvasToken)
-        elif sys.argv[2] =="assignments":
-            if len(sys.argv) < 4:
-                printError("Please choose a course")
-                #  listActiveCoursesTable()
-                #  chooseCourse()
-                listAssignmentsTable(chooseCourse())
-            else:
-                listAssignmentsTable(sys.argv[3])
-                #  listAssignments(canvasDomain, canvasToken, sys.argv[3])
-    elif sys.argv[1] == "summary":
+    if args.list and args.list == 'courses':
+        listActiveCoursesTable()
+
+    if args.list and args.list == 'assignments':
+        if args.courseID:
+            listAssignmentsTable(args.courseID)
+        else:
+            listAssignmentsTable(chooseCourse())
+
+    if args.summary:
         assignmentSummary()
+
+
+
+    #  elif sys.argv[1] == "list":
+        #  if len(sys.argv) < 3:
+            #  printError("List What?")
+        #  elif sys.argv[2] == "courses":
+            #  listActiveCoursesTable()
+            #  #  listActiveCourses(canvasDomain, canvasToken)
+        #  elif sys.argv[2] =="assignments":
+            #  if len(sys.argv) < 4:
+                #  printError("Please choose a course")
+                #  #  listActiveCoursesTable()
+                #  #  chooseCourse()
+                #  listAssignmentsTable(chooseCourse())
+            #  else:
+                #  listAssignmentsTable(sys.argv[3])
+                #  #  listAssignments(canvasDomain, canvasToken, sys.argv[3])
+    #  elif sys.argv[1] == "summary":
+        #  assignmentSummary()
 
 def main():
 
