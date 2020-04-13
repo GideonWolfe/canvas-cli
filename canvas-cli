@@ -8,6 +8,7 @@ import json
 import requests
 import io
 import sys
+import os
 import argparse
 import Fetch as Fetch
 import Format as Format
@@ -162,7 +163,7 @@ def main():
     global canvasDomain
 
     # Load config file & save config file
-    with open("config.yaml", 'r') as stream:
+    with open(os.path.expanduser("~") + "/.config/canvas-cli/config.yaml", 'r') as stream:
         conf = yaml.safe_load(stream)
 
     canvasDomain = str(conf['default']['canvasdomain'])
