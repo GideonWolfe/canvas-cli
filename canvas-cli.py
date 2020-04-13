@@ -93,6 +93,7 @@ def formatScore(assignment, percentage=False):
     return(scoreString)
 
 def formatDueDate(assignment):
+    try:
         dueDateRaw = assignment['due_at']
         dueDateObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
         todayObject = datetime.datetime.now()
@@ -115,6 +116,8 @@ def formatDueDate(assignment):
                 return(f"{bcolors.OKBLUE}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
             elif daysLeft >= 1:
                 return(f"{bcolors.WARNING}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
+    except:
+        return("--")
 
 
 # Returns a JSON array with the users active courses
