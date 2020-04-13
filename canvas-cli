@@ -24,7 +24,7 @@ def load_config(config_file):
         except yaml.YAMLError as exc:
             print(exc)
 
-# Returns tuple of (assignmentID, submissionURL)
+# Returns tuple of (assignmentID, assignmentName, submissionURL)
 def chooseAssignment(courseId):
     assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
     idDict = {}
@@ -40,26 +40,26 @@ def chooseAssignment(courseId):
     userChoice = int(input("Choose an assignment: "))
     return((idDict[userChoice][0], idDict[userChoice][1], idDict[userChoice][2]))
 
-
-# Returns course ID but presents user
-# with human readable course numbers
+# Returns tuple of (courseID, courseName, url)
 def chooseCourse():
-    courses = Fetch.fetchCourseIDs(canvasDomain, canvasToken)
+    courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
     tableData = []
     HEADERS = ["#", "Course"]
     idDict = {}
     i = 0
-    for item in courses.items():
-        idDict.update({i:item})
+    for course in courses:
+        url = canvasDomain+"courses/"+str(course['id'])
+        idDict.update({i:(course['id'], course['name'], url)})
         i = i+1
     for num in idDict.keys():
-        tableData.append([num, idDict[num][0]])
+        tableData.append([num, idDict[num][1]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
     userChoice = int(input("Choose a course: "))
-    return(idDict[userChoice][1])
+    return((idDict[userChoice][0],idDict[userChoice][1],idDict[userChoice][2]))
+
 
 def chooseFile():
-    files = Fetch.fetchFiles(chooseCourse(), canvasDomain, canvasToken)
+    files = Fetch.fetchFiles(chooseCourse()[0], canvasDomain, canvasToken)
     tableData = []
     HEADERS = ["#", "Name"]
     #  for file in files:
@@ -148,6 +148,8 @@ def parseArgs():
                       help='print a summary of courses')
     args.add_argument('-download', metavar='assignmentID', type=str,
                       help='download either a course file or assignment submission')
+    args.add_argument('-open', choices=['course', 'assignment'], type=str,
+                      help='Open the page for a course or assignment in a web browser')
     return args.parse_args()
 
 def main():
@@ -173,15 +175,23 @@ def main():
         if args.courseID:
             listAssignmentsTable(args.courseID)
         else:
-            listAssignmentsTable(chooseCourse())
+            listAssignmentsTable(chooseCourse()[0])
 
     if args.summary:
         assignmentSummary()
 
     if args.download and args.download == 'submission':
-        Fetch.downloadFile(chooseAssignment(chooseCourse()))
+        Fetch.downloadFile(chooseAssignment(chooseCourse()[0]))
     if args.download and args.download == 'file':
         Fetch.downloadFile(chooseFile())
+
+
+    if args.open and args.open == 'assignment':
+        chooseAssignment(chooseCourse()[0])
+    if args.open and args.open == 'course':
+        chooseCourse()
+
+
 
 if __name__ == "__main__":
     main()
