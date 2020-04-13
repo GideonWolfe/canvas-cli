@@ -72,6 +72,9 @@ def formatDueDate(assignment):
         # assigment already submitted
         if assignment['submission']['submitted_at']:
             return(month+" "+day+", "+hour+":"+minute)
+        # assignment is late
+        if assignment['late']:
+            return(f"{bcolors.FAIL}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
         else:
             daysLeft = abs((dueDateObject - todayObject).days)
             if daysLeft >= 7:
@@ -135,9 +138,6 @@ def listAssignmentsTable(courseId):
             scoreString = "-/"+str(pointsPossible)
         else:
             scoreString = formatScore(pointsPossible, pointsEarned, False)
-        #  dueDateRaw = assignment['due_at']
-        #  dateTimeObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
-        #  dueDate = calendar.month_abbr[dateTimeObject.month]+" "+str(dateTimeObject.day)+", "+str(dateTimeObject.hour)+":"+str(dateTimeObject.minute)
         dueDate = formatDueDate(assignment)
         tableData.append((ID, fullName, dueDate, scoreString))
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
