@@ -19,6 +19,7 @@ class bcolors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
+    FADED = '\033[2m'
     UNDERLINE = '\033[4m'
     STRIKETHROUGH = '\033[9m'
 
@@ -102,7 +103,7 @@ def formatDueDate(assignment):
         # assigment already submitted
         if assignment['submission']['submitted_at']:
             #  return(month+" "+day+", "+hour+":"+minute)
-            return(f"{bcolors.STRIKETHROUGH}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC} (DONE)")
+            return(f"{bcolors.FADED}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC} (DONE)")
         # assignment is late
         if assignment['submission']['late']:
             return(f"{bcolors.FAIL}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
@@ -205,7 +206,7 @@ def parseArgs():
     args = argparse.ArgumentParser(
         description='A light-weight command-line interface for canvas.')
     args.add_argument('-list', choices=['courses', 'assignments'], help='List either courses or assignments')
-    args.add_argument('-courseID', type=int, help='If you know the ID of your course, add it here to speed up the search')
+    args.add_argument('-courseID', type=str, help='If you know the ID of your course, add it here to speed up the search')
     args.add_argument('-summary', action='store_true', help='print a summary of courses')
     args = args.parse_args()
 
