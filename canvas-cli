@@ -104,6 +104,29 @@ def listAssignmentsTable(courseId):
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
 
 
+
+
+
+# Prints list of assignments for a given course
+def listAllGrades():
+    courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
+    tableData = []
+    HEADERS=["Name", "Current Grade", "Current Score", "Final Grade", "Final Score"]
+    for course in courses:
+        fullName = course['name']
+        courseId = course['id']
+        endDate = course['end_at']
+        ccg = Format.formatCourseScore(course['enrollments'][0]['computed_current_grade'])
+        ccs = Format.formatCourseScore(course['enrollments'][0]['computed_current_score'])
+        cfg = Format.formatCourseScore(course['enrollments'][0]['computed_final_grade'])
+        cfs = Format.formatCourseScore(course['enrollments'][0]['computed_final_score'])
+        if not endDate:
+            tableData.append((fullName, ccg, ccs, cfg, cfs))
+    print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
+
+
+
+
 # Prints a list of active courses
 def listActiveCourses():
     courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
@@ -152,6 +175,8 @@ def parseArgs():
                       help='download either a course file or assignment submission')
     args.add_argument('-open', choices=['course', 'assignment'], type=str,
                       help='Open the page for a course or assignment in a web browser')
+    args.add_argument('-grades', metavar='<courseID> (optional)', type=str,
+                      help='Show grades for all courses or a breakdown for one course')
     return args.parse_args()
 
 def main():
@@ -187,11 +212,13 @@ def main():
     if args.download and args.download == 'file':
         Fetch.downloadFile(chooseFile())
 
-
     if args.open and args.open == 'assignment':
         chooseAssignment(chooseCourse()[0])
     if args.open and args.open == 'course':
         chooseCourse()
+
+    if args.grades:
+        listAllGrades()
 
 
 
