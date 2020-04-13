@@ -38,7 +38,7 @@ def chooseAssignment(courseId):
         tableData.append([num, idDict[num][1]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
     userChoice = int(input("Choose an assignment: "))
-    return((idDict[userChoice][0], idDict[userChoice][2]))
+    return((idDict[userChoice][0], idDict[userChoice][1], idDict[userChoice][2]))
 
 
 # Returns course ID but presents user
@@ -132,7 +132,6 @@ def parseArgs():
                       help='download either a course file or assignment submission')
     return args.parse_args()
 
-
 def main():
 
     # Declare global variables
@@ -162,7 +161,7 @@ def main():
         assignmentSummary()
 
     if args.download and args.download == 'submission':
-        chooseAssignment(chooseCourse())
+        Fetch.fetchFile(chooseAssignment(chooseCourse()))
     if args.download and args.download == 'file':
         chooseCourse()
 
