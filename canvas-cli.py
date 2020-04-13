@@ -35,6 +35,25 @@ def load_config(config_file):
 def printError(errorMessage):
     print(f"{bcolors.WARNING}ERROR:{bcolors.ENDC} " + errorMessage)
 
+
+# Returns course ID but presents user
+# with human readable course numbers
+def chooseCourse():
+    courses = fetchCourseIDs()
+    tableData = []
+    HEADERS = ["#", "Course"]
+    idDict = {}
+    i = 0
+    for item in courses.items():
+        idDict.update({i:item})
+        i = i+1
+    for num in idDict.keys():
+        tableData.append([num, idDict[num][0]])
+    print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
+    userChoice = int(input("Choose a course: "))
+    return(idDict[userChoice][1])
+
+
 def formatScore(assignment, percentage=False):
     pointsPossible = assignment['points_possible']
     pointsEarned = assignment['submission']['score']
@@ -194,8 +213,10 @@ def parseArgs():
             #  listActiveCourses(canvasDomain, canvasToken)
         elif sys.argv[2] =="assignments":
             if len(sys.argv) < 4:
-                printError("Please supply a course ID")
-                listActiveCoursesTable()
+                printError("Please choose a course")
+                #  listActiveCoursesTable()
+                #  chooseCourse()
+                listAssignmentsTable(chooseCourse())
             else:
                 listAssignmentsTable(sys.argv[3])
                 #  listAssignments(canvasDomain, canvasToken, sys.argv[3])
