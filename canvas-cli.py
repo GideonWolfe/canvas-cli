@@ -57,6 +57,8 @@ def chooseCourse():
 
 def formatScore(assignment, percentage=False):
     pointsPossible = assignment['points_possible']
+    if 'score' not in assignment['submission'].keys():
+        return("-/"+str(pointsPossible))
     pointsEarned = assignment['submission']['score']
     score = ''
     # Unscored assignment
@@ -218,26 +220,6 @@ def parseArgs():
 
     if args.summary:
         assignmentSummary()
-
-
-
-    #  elif sys.argv[1] == "list":
-        #  if len(sys.argv) < 3:
-            #  printError("List What?")
-        #  elif sys.argv[2] == "courses":
-            #  listActiveCoursesTable()
-            #  #  listActiveCourses(canvasDomain, canvasToken)
-        #  elif sys.argv[2] =="assignments":
-            #  if len(sys.argv) < 4:
-                #  printError("Please choose a course")
-                #  #  listActiveCoursesTable()
-                #  #  chooseCourse()
-                #  listAssignmentsTable(chooseCourse())
-            #  else:
-                #  listAssignmentsTable(sys.argv[3])
-                #  #  listAssignments(canvasDomain, canvasToken, sys.argv[3])
-    #  elif sys.argv[1] == "summary":
-        #  assignmentSummary()
 
 def main():
 
