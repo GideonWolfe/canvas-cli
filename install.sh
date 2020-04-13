@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pip3 install -Ir pipReqs.txt
+
 FILEPATH=$(readlink -f "canvas-cli")
 
 chmod +x canvas-cli
