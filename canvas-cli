@@ -128,7 +128,7 @@ def parseArgs():
                       help='If you know the ID of your course, add it here to speed up the search')
     args.add_argument('-summary', action='store_true',
                       help='print a summary of courses')
-    args.add_argument('-download', type=str,
+    args.add_argument('-download', metavar='assignmentID', type=str,
                       help='download either a course file or assignment submission')
     return args.parse_args()
 
