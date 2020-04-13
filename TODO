@@ -1,0 +1,14 @@
+TODO:
+  Submit local files to an assignment
+
+  Usability of list assignments (typing the long course ID isn't ideal)
+
+  Messaging (maybe this needs to wait for the TUI...)
+
+  Canvas-cli should be usable for professors and TA's too, so ability for profs to change grades/post assignments?
+
+  Account settings
+
+  Get and view unread announcements
+
+  Download files that are in course -> files -> /directory/to/file
