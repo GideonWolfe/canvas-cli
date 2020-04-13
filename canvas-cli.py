@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import calendar
+import datetime
 from tabulate import tabulate
 import yaml
 import json
@@ -59,7 +61,8 @@ def fetchCourseIDs():
 def fetchAssignments(courseId):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignments"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
-    assignmentsRAW = requests.get(url, headers=HEADERS)
+    PARAMS = {'all_dates': 1, 'include': 'submission'}
+    assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     assignments = assignmentsRAW.json()
     return(assignments)
 
@@ -76,11 +79,18 @@ def listAssignments(courseId, summary=False):
 def listAssignmentsTable(courseId):
     assignments = fetchAssignments(courseId)
     tableData = []
-    HEADERS=["ID", "Name"]
+    HEADERS=["ID", "Name", "Due Date", "Score"]
     for assignment in assignments:
         fullName = assignment['name']
         ID = assignment['id']
-        tableData.append((ID, fullName))
+        pointsPossible = assignment['points_possible']
+        pointsEarned = assignment['submission']['score']
+        if not pointsEarned:
+            pointsEarned = '-'
+        dueDateRaw = assignment['due_at']
+        dateTimeObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
+        dueDate = calendar.month_abbr[dateTimeObject.month]+" "+str(dateTimeObject.day)+", "+str(dateTimeObject.hour)+":"+str(dateTimeObject.minute)
+        tableData.append((ID, fullName, dueDate, str(pointsEarned)+"/"+str(pointsPossible)))
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
 
 # Prints a list of active courses
