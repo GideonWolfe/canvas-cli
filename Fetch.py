@@ -25,7 +25,8 @@ def fetchCourseIDs(canvasDomain, canvasToken):
 def fetchAssignments(courseId, canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignments"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
-    PARAMS = {'all_dates': 1, 'include': 'submission'}
+    # PARAMS = {'all_dates': 1, 'include': 'submission'}
+    PARAMS = {'include': ['all_dates', 'submission']}
     assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     assignments = assignmentsRAW.json()
     return(assignments)
