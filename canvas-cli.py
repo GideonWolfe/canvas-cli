@@ -19,6 +19,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    #  STRIKETHROUGH = ''
 
 # Global Variables
 conf = {}
@@ -33,6 +34,50 @@ def load_config(config_file):
 
 def printError(errorMessage):
     print(f"{bcolors.WARNING}ERROR:{bcolors.ENDC} " + errorMessage)
+
+def formatScore(pointsPossible, pointsEarned, percentage=False):
+    score = float(pointsEarned/pointsPossible)
+    percentage = score*100
+    if score >= .90:
+        if percentage:
+            scoreString = f"{bcolors.OKGREEN}"+str(percentage)+f"%{bcolors.ENDC}"
+        else:
+            scoreString = f"{bcolors.OKGREEN}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+    elif score >= .80:
+        if percentage:
+            scoreString = f"{bcolors.OKBLUE}"+str(percentage)+f"%{bcolors.ENDC}"
+        else:
+            scoreString = f"{bcolors.OKBLUE}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+    elif score >= .70:
+        if percentage:
+            scoreString = f"{bcolors.WARNING}"+str(percentage)+f"%{bcolors.ENDC}"
+        else:
+            scoreString = f"{bcolors.WARNING}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+    else:
+        if percentage:
+            scoreString = f"{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
+        else:
+            scoreString = f"{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+
+    return(scoreString)
+
+def formatDueDate(assignment):
+        dueDateRaw = assignment['due_at']
+        dueDateObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
+        todayObject = datetime.datetime.now()
+        month = calendar.month_abbr[dueDateObject.month]
+        day = str(dueDateObject.day)
+        hour = str(dueDateObject.hour)
+        minute = str(dueDateObject.minute)
+        # assigment already submitted
+        if assignment['submission']['submitted_at']:
+            return(month+" "+day+", "+hour+":"+minute)
+        else:
+            daysLeft = abs((dueDateObject - todayObject).days)
+            if daysLeft >= 7:
+                return(f"{bcolors.OKGREEN}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
+            elif daysLeft >= 3:
+                return(f"{bcolors.OKBLUE}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
 
 
 
@@ -86,11 +131,14 @@ def listAssignmentsTable(courseId):
         pointsPossible = assignment['points_possible']
         pointsEarned = assignment['submission']['score']
         if not pointsEarned:
-            pointsEarned = '-'
-        dueDateRaw = assignment['due_at']
-        dateTimeObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
-        dueDate = calendar.month_abbr[dateTimeObject.month]+" "+str(dateTimeObject.day)+", "+str(dateTimeObject.hour)+":"+str(dateTimeObject.minute)
-        tableData.append((ID, fullName, dueDate, str(pointsEarned)+"/"+str(pointsPossible)))
+            scoreString = "-/"+str(pointsPossible)
+        else:
+            scoreString = formatScore(pointsPossible, pointsEarned, False)
+        #  dueDateRaw = assignment['due_at']
+        #  dateTimeObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
+        #  dueDate = calendar.month_abbr[dateTimeObject.month]+" "+str(dateTimeObject.day)+", "+str(dateTimeObject.hour)+":"+str(dateTimeObject.minute)
+        dueDate = formatDueDate(assignment)
+        tableData.append((ID, fullName, dueDate, scoreString))
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
 
 # Prints a list of active courses
