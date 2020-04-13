@@ -8,11 +8,31 @@ class bcolors:
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
-    ENDC = '\033[0m'
+    BLUE = "\033[0;34m"
+    BLACK = "\033[0;30m"
+    RED = "\033[0;31m"
+    GREEN = "\033[0;32m"
+    BROWN = "\033[0;33m"
+    BLUE = "\033[0;34m"
+    PURPLE = "\033[0;35m"
+    CYAN = "\033[0;36m"
+    LIGHT_GRAY = "\033[0;37m"
+    DARK_GRAY = "\033[1;30m"
+    LIGHT_RED = "\033[1;31m"
+    LIGHT_GREEN = "\033[1;32m"
+    YELLOW = "\033[1;33m"
+    LIGHT_BLUE = "\033[1;34m"
+    LIGHT_PURPLE = "\033[1;35m"
+    LIGHT_CYAN = "\033[1;36m"
+    LIGHT_WHITE = "\033[1;37m"
     BOLD = '\033[1m'
     FADED = '\033[2m'
     UNDERLINE = '\033[4m'
     STRIKETHROUGH = '\033[9m'
+    BLINK = "\033[5m"
+    ITALIC = "\033[3m"
+    NEGATIVE = "\033[7m"
+    ENDC = '\033[0m'
 
 def formatStatus(assignment):
     if assignment['submission']['late'] == True:
@@ -25,6 +45,27 @@ def formatStatus(assignment):
         return(f"{bcolors.OKBLUE}🔎"+f"{bcolors.ENDC}")
     elif assignment['submission']['workflow_state'] == 'unsubmitted':
         return(f"{bcolors.WARNING}✗"+f"{bcolors.ENDC}")
+
+
+def formatCourseScore(score, letter=False):
+    if not score:
+        return(" -- ")
+    elif score >= 90:
+        return(f"{(bcolors.OKGREEN)}"+str(score)+f"{bcolors.ENDC}")
+    elif score >= 80:
+        return(f"{(bcolors.OKBLUE)}"+str(score)+f"{bcolors.ENDC}")
+    elif score >= 70:
+        return(f"{(bcolors.YELLOW)}"+str(score)+f"{bcolors.ENDC}")
+    elif score >= 60:
+        return(f"{(bcolors.PURPLE)}"+str(score)+f"{bcolors.ENDC}")
+    elif score >= 50:
+        return(f"{(bcolors.RED)}"+str(score)+f"{bcolors.ENDC}")
+    else:
+        return(f"{bcolors.RED}{bcolors.BLINK}"+str(score)+f"{bcolors.ENDC}")
+
+
+
+
 
 def formatScore(assignment, percentage=False):
     pointsPossible = assignment['points_possible']
@@ -53,14 +94,19 @@ def formatScore(assignment, percentage=False):
             scoreString = f"{bcolors.OKBLUE}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
     elif score >= .70:
         if percentage == True:
+            scoreString = f"{bcolors.YELLOW}"+str(percentage)+f"%{bcolors.ENDC}"
+        else:
+            scoreString = f"{bcolors.YELLOW}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
+    elif score >= .60:
+        if percentage == True:
             scoreString = f"{bcolors.WARNING}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
             scoreString = f"{bcolors.WARNING}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
     else:
         if percentage == True:
-            scoreString = f"{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
+            scoreString = f"{bcolors.BLINK}{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
-            scoreString = f"{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
+            scoreString = f"{bcolors.BLINK}{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
 
     return(scoreString)
 
