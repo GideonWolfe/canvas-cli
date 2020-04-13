@@ -48,9 +48,11 @@ def chooseCourse():
     idDict = {}
     i = 0
     for course in courses:
-        url = canvasDomain+"courses/"+str(course['id'])
-        idDict.update({i:(course['id'], course['name'], url)})
-        i = i+1
+        # hack to make sure course is active
+        if not course['end_at']:
+            url = canvasDomain+"courses/"+str(course['id'])
+            idDict.update({i:(course['id'], course['name'], url)})
+            i = i+1
     for num in idDict.keys():
         tableData.append([num, idDict[num][1]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
