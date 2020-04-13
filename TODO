@@ -1,14 +1,19 @@
+ordered from most important to least important
+
 TODO:
+  Usability of list assignments (typing the long course ID isn't ideal)
+
   Submit local files to an assignment
 
-  Usability of list assignments (typing the long course ID isn't ideal)
+  Get and view unread course announcements
+  
+  Canvas-cli should be usable for professors and TA's too, so ability for profs to change grades/post assignments?
+
+  Download files that are in course -> files -> /directory/to/file
 
   Messaging (maybe this needs to wait for the TUI...)
 
-  Canvas-cli should be usable for professors and TA's too, so ability for profs to change grades/post assignments?
-
   Account settings
 
-  Get and view unread announcements
-
-  Download files that are in course -> files -> /directory/to/file
+  cache to speed up access times. For example, a command-line flag like -update could be used to fetch the most recent data,
+  and all other commands just use the data from the most recent cached update call.
