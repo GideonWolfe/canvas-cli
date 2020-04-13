@@ -9,22 +9,12 @@ import requests
 import io
 import sys
 import argparse
-
-# ANSI escape sequences to format output
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    FADED = '\033[2m'
-    UNDERLINE = '\033[4m'
-    STRIKETHROUGH = '\033[9m'
+import Fetch as Fetch
+import Format as Format
 
 # Global Variables
 conf = {}
+
 
 # Load config file
 def load_config(config_file):
@@ -34,14 +24,11 @@ def load_config(config_file):
         except yaml.YAMLError as exc:
             print(exc)
 
-def printError(errorMessage):
-    print(f"{bcolors.WARNING}ERROR:{bcolors.ENDC} " + errorMessage)
-
 
 # Returns course ID but presents user
 # with human readable course numbers
 def chooseCourse():
-    courses = fetchCourseIDs()
+    courses = Fetch.fetchCourseIDs(canvasDomain, canvasToken)
     tableData = []
     HEADERS = ["#", "Course"]
     idDict = {}
@@ -56,125 +43,34 @@ def chooseCourse():
     return(idDict[userChoice][1])
 
 
-def formatScore(assignment, percentage=False):
-    pointsPossible = assignment['points_possible']
-    if 'score' not in assignment['submission'].keys():
-        return("-/"+str(pointsPossible))
-    pointsEarned = assignment['submission']['score']
-    score = ''
-    # Unscored assignment
-    if not pointsEarned:
-        return("-/"+str(pointsPossible))
-    else:
-        score = float(pointsEarned/pointsPossible)
-        percentage = score*100
-
-    if score >= .90:
-        if percentage == True:
-            scoreString = f"{bcolors.OKGREEN}"+str(percentage)+f"%{bcolors.ENDC}"
-        else:
-            scoreString = f"{bcolors.OKGREEN}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
-    elif score >= .80:
-        if percentage == True:
-            scoreString = f"{bcolors.OKBLUE}"+str(percentage)+f"%{bcolors.ENDC}"
-        else:
-            scoreString = f"{bcolors.OKBLUE}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
-    elif score >= .70:
-        if percentage == True:
-            scoreString = f"{bcolors.WARNING}"+str(percentage)+f"%{bcolors.ENDC}"
-        else:
-            scoreString = f"{bcolors.WARNING}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
-    else:
-        if percentage == True:
-            scoreString = f"{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
-        else:
-            scoreString = f"{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
-
-    return(scoreString)
-
-def formatDueDate(assignment):
-    try:
-        dueDateRaw = assignment['due_at']
-        dueDateObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
-        todayObject = datetime.datetime.now()
-        month = calendar.month_abbr[dueDateObject.month]
-        day = str(dueDateObject.day)
-        hour = str(dueDateObject.hour)
-        minute = str(dueDateObject.minute)
-        # assigment already submitted
-        if assignment['submission']['submitted_at']:
-            #  return(month+" "+day+", "+hour+":"+minute)
-            return(f"{bcolors.FADED}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC} (DONE)")
-        # assignment is late
-        if assignment['submission']['late']:
-            return(f"{bcolors.FAIL}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
-        else:
-            daysLeft = abs((dueDateObject - todayObject).days)
-            if daysLeft >= 7:
-                return(f"{bcolors.OKGREEN}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
-            elif daysLeft >= 3:
-                return(f"{bcolors.OKBLUE}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
-            elif daysLeft >= 1:
-                return(f"{bcolors.WARNING}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
-    except:
-        return("--")
-
-
-# Returns a JSON array with the users active courses
-def fetchActiveCourses():
-    url = canvasDomain+"api/v1/courses"
-    HEADERS = {'Authorization': "Bearer "+canvasToken}
-    PARAMS = {'enrollment_state':'active',
-              'include': 'course_progress',
-              'exclude_blueprint_courses':'true'}
-    coursesRAW = requests.get(url, params=PARAMS, headers=HEADERS)
-    courses = coursesRAW.json()
-    return(courses)
-
-# Returns dictionary of courseID and courseName
-def fetchCourseIDs():
-    courses = fetchActiveCourses()
-    courseIds = {}
-    for course in courses:
-        # Remove stray ended courses
-        if not course['end_at']:
-            courseIds.update({course['name']:course['id']})
-    return(courseIds)
-
-# Returns a JSON array of assignments for a given course
-def fetchAssignments(courseId):
-    url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignments"
-    HEADERS = {'Authorization': "Bearer "+canvasToken}
-    PARAMS = {'all_dates': 1, 'include': 'submission'}
-    assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
-    assignments = assignmentsRAW.json()
-    return(assignments)
-
 # Prints list of assignments for a given course
 def listAssignments(courseId, summary=False):
-    assignments = fetchAssignments(courseId)
+    assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
     for assignment in assignments:
         if summary:
             print(" • "+assignment['name'])
         else:
             print(assignment['name'])
 
+
 # Prints list of assignments for a given course
 def listAssignmentsTable(courseId):
-    assignments = fetchAssignments(courseId)
+    assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
+    print(assignments)
     tableData = []
     HEADERS=["ID", "Name", "Due Date", "Score"]
     for assignment in assignments:
         fullName = assignment['name']
         ID = assignment['id']
-        scoreString = formatScore(assignment, False)
-        dueDate = formatDueDate(assignment)
+        scoreString = Format.formatScore(assignment, False)
+        dueDate = Format.formatDueDate(assignment)
         tableData.append((ID, fullName, dueDate, scoreString))
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
 
+
 # Prints a list of active courses
 def listActiveCourses():
-    courses = fetchActiveCourses()
+    courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
     for course in courses:
         fullName = course['name']
         courseId = course['id']
@@ -182,9 +78,10 @@ def listActiveCourses():
         if not endDate:
             print("[ID: "+str(courseId)+"] "+fullName)
 
+
 # Prints a list of active courses in a table
 def listActiveCoursesTable():
-    courses = fetchActiveCourses()
+    courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
     tableData = []
     HEADERS=["ID", "Name"]
     for course in courses:
@@ -198,32 +95,26 @@ def listActiveCoursesTable():
 
 # Prints a list of active courses and their outstanding assignments
 def assignmentSummary():
-    courses = fetchCourseIDs()
+    courses = Fetch.fetchCourseIDs(canvasDomain, canvasToken)
     #  print(courses.keys())
     for course in courses:
         print("\u0332".join(course))
         listAssignments(courses[course], True)
 
-def parseArgs():
 
+def parseArgs():
     args = argparse.ArgumentParser(
         description='A light-weight command-line interface for canvas.')
-    args.add_argument('-list', choices=['courses', 'assignments'], help='List either courses or assignments')
-    args.add_argument('-courseID', type=str, help='If you know the ID of your course, add it here to speed up the search')
-    args.add_argument('-summary', action='store_true', help='print a summary of courses')
-    args = args.parse_args()
 
-    if args.list and args.list == 'courses':
-        listActiveCoursesTable()
+    args.add_argument('-list', choices=['courses', 'assignments'],
+                      help='List either courses or assignments')
+    args.add_argument('-courseID', type=str,
+                      help='If you know the ID of your course, add it here to speed up the search')
+    args.add_argument('-summary', action='store_true',
+                      help='print a summary of courses')
 
-    if args.list and args.list == 'assignments':
-        if args.courseID:
-            listAssignmentsTable(args.courseID)
-        else:
-            listAssignmentsTable(chooseCourse())
+    return args.parse_args()
 
-    if args.summary:
-        assignmentSummary()
 
 def main():
 
@@ -239,8 +130,20 @@ def main():
     canvasDomain = str(conf['default']['canvasdomain'])
     canvasToken = str(conf['default']['canvastoken'])
 
+    args = parseArgs()
 
-    parseArgs()
+    if args.list and args.list == 'courses':
+        listActiveCoursesTable()
+
+    if args.list and args.list == 'assignments':
+        if args.courseID:
+            listAssignmentsTable(args.courseID)
+        else:
+            listAssignmentsTable(chooseCourse())
+
+    if args.summary:
+        assignmentSummary()
+
 
 
 if __name__ == "__main__":
