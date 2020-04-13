@@ -35,6 +35,8 @@ def formatScore(assignment, percentage=False):
     # Unscored assignment
     if not pointsEarned:
         return("-/"+str(pointsPossible))
+    elif pointsPossible == 0:
+            return(f"{bcolors.FADED}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible))
     else:
         score = float(pointsEarned/pointsPossible)
         percentage = score*100
