@@ -15,10 +15,14 @@ class bcolors:
     STRIKETHROUGH = '\033[9m'
 
 def formatSubmitted(assignment):
-    if assignment['submission']['submitted_at']:
-        return(f"{bcolors.OKGREEN} ✓"+f"{bcolors.ENDC}")
+    if assignment['submission']['workflow_state'] == 'graded':
+        return(f"{bcolors.OKGREEN}✓"+f"{bcolors.ENDC}")
+    elif assignment['submission']['workflow_state'] == 'submitted':
+        return(f"{bcolors.OKBLUE}✓"+f"{bcolors.ENDC}")
+    elif assignment['submission']['workflow_state'] == 'pending_review':
+        return(f"{bcolors.OKBLUE}🔎"+f"{bcolors.ENDC}")
     else:
-        return(f"{bcolors.WARNING} ✗"+f"{bcolors.ENDC}")
+        return(f"{bcolors.OKBLUE}✗"+f"{bcolors.ENDC}")
 
 def formatScore(assignment, percentage=False):
     pointsPossible = assignment['points_possible']
