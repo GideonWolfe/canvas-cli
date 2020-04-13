@@ -73,7 +73,7 @@ def chooseFile():
         tableData.append([num, idDict[num][0]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
     userChoice = int(input("Choose a course: "))
-    return(idDict[userChoice][1])
+    return(idDict[userChoice][0], idDict[userChoice][1])
 
 
 # Prints list of assignments for a given course
@@ -89,15 +89,16 @@ def listAssignments(courseId, summary=False):
 # Prints list of assignments for a given course
 def listAssignmentsTable(courseId):
     assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
-    print(assignments)
+    #  print(assignments)
     tableData = []
-    HEADERS=["ID", "Name", "Due Date", "Score"]
+    HEADERS=["ID", "Name", "Due Date", "Submitted", "Score"]
     for assignment in assignments:
         fullName = assignment['name']
         ID = assignment['id']
         scoreString = Format.formatScore(assignment, False)
+        submitted = Format.formatSubmitted(assignment)
         dueDate = Format.formatDueDate(assignment)
-        tableData.append((ID, fullName, dueDate, scoreString))
+        tableData.append((ID, fullName, dueDate, submitted, scoreString))
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
 
 

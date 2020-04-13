@@ -14,6 +14,11 @@ class bcolors:
     UNDERLINE = '\033[4m'
     STRIKETHROUGH = '\033[9m'
 
+def formatSubmitted(assignment):
+    if assignment['submission']['submitted_at']:
+        return(f"{bcolors.OKGREEN} ✓"+f"{bcolors.ENDC}")
+    else:
+        return(f"{bcolors.WARNING} ✗"+f"{bcolors.ENDC}")
 
 def formatScore(assignment, percentage=False):
     pointsPossible = assignment['points_possible']
@@ -32,22 +37,22 @@ def formatScore(assignment, percentage=False):
         if percentage == True:
             scoreString = f"{bcolors.OKGREEN}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
-            scoreString = f"{bcolors.OKGREEN}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+            scoreString = f"{bcolors.OKGREEN}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
     elif score >= .80:
         if percentage == True:
             scoreString = f"{bcolors.OKBLUE}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
-            scoreString = f"{bcolors.OKBLUE}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+            scoreString = f"{bcolors.OKBLUE}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
     elif score >= .70:
         if percentage == True:
             scoreString = f"{bcolors.WARNING}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
-            scoreString = f"{bcolors.WARNING}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+            scoreString = f"{bcolors.WARNING}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
     else:
         if percentage == True:
             scoreString = f"{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
-            scoreString = f"{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
+            scoreString = f"{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC}/"+str(pointsPossible)
 
     return(scoreString)
 
@@ -63,7 +68,7 @@ def formatDueDate(assignment):
         # assigment already submitted
         if assignment['submission']['submitted_at']:
             #  return(month+" "+day+", "+hour+":"+minute)
-            return(f"{bcolors.FADED}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC} (DONE)")
+            return(f"{bcolors.FADED}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
         # assignment is late
         if assignment['submission']['late']:
             return(f"{bcolors.FAIL}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
