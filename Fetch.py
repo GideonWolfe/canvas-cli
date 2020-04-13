@@ -31,3 +31,8 @@ def fetchAssignments(courseId, canvasDomain, canvasToken):
     return(assignments)
 
 
+def fetchFile(assignment):
+    url = assignment[2]
+    #  print(url)
+    #  response = requests.get(url)
+    #  print(response.text)
