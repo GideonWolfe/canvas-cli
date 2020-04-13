@@ -78,7 +78,8 @@ def formatDueDate(assignment):
                 return(f"{bcolors.OKGREEN}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
             elif daysLeft >= 3:
                 return(f"{bcolors.OKBLUE}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
-
+            elif daysLeft >= 1:
+                return(f"{bcolors.WARNING}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
 
 
 # Returns a JSON array with the users active courses
