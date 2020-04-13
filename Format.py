@@ -1,3 +1,6 @@
+import calendar
+import datetime
+
 # ANSI escape sequences to format output
 class bcolors:
     HEADER = '\033[95m'
