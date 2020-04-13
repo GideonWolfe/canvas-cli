@@ -19,7 +19,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-    #  STRIKETHROUGH = ''
+    STRIKETHROUGH = '\033[9m'
 
 # Global Variables
 conf = {}
@@ -35,26 +35,34 @@ def load_config(config_file):
 def printError(errorMessage):
     print(f"{bcolors.WARNING}ERROR:{bcolors.ENDC} " + errorMessage)
 
-def formatScore(pointsPossible, pointsEarned, percentage=False):
-    score = float(pointsEarned/pointsPossible)
-    percentage = score*100
+def formatScore(assignment, percentage=False):
+    pointsPossible = assignment['points_possible']
+    pointsEarned = assignment['submission']['score']
+    score = ''
+    # Unscored assignment
+    if not pointsEarned:
+        return("-/"+str(pointsPossible))
+    else:
+        score = float(pointsEarned/pointsPossible)
+        percentage = score*100
+
     if score >= .90:
-        if percentage:
+        if percentage == True:
             scoreString = f"{bcolors.OKGREEN}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
             scoreString = f"{bcolors.OKGREEN}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
     elif score >= .80:
-        if percentage:
+        if percentage == True:
             scoreString = f"{bcolors.OKBLUE}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
             scoreString = f"{bcolors.OKBLUE}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
     elif score >= .70:
-        if percentage:
+        if percentage == True:
             scoreString = f"{bcolors.WARNING}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
             scoreString = f"{bcolors.WARNING}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
     else:
-        if percentage:
+        if percentage == True:
             scoreString = f"{bcolors.FAIL}"+str(percentage)+f"%{bcolors.ENDC}"
         else:
             scoreString = f"{bcolors.FAIL}"+str(pointsEarned)+f"{bcolors.ENDC} /"+str(pointsPossible)
@@ -71,9 +79,10 @@ def formatDueDate(assignment):
         minute = str(dueDateObject.minute)
         # assigment already submitted
         if assignment['submission']['submitted_at']:
-            return(month+" "+day+", "+hour+":"+minute)
+            #  return(month+" "+day+", "+hour+":"+minute)
+            return(f"{bcolors.STRIKETHROUGH}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC} (DONE)")
         # assignment is late
-        if assignment['late']:
+        if assignment['submission']['late']:
             return(f"{bcolors.FAIL}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
         else:
             daysLeft = abs((dueDateObject - todayObject).days)
@@ -132,12 +141,7 @@ def listAssignmentsTable(courseId):
     for assignment in assignments:
         fullName = assignment['name']
         ID = assignment['id']
-        pointsPossible = assignment['points_possible']
-        pointsEarned = assignment['submission']['score']
-        if not pointsEarned:
-            scoreString = "-/"+str(pointsPossible)
-        else:
-            scoreString = formatScore(pointsPossible, pointsEarned, False)
+        scoreString = formatScore(assignment, False)
         dueDate = formatDueDate(assignment)
         tableData.append((ID, fullName, dueDate, scoreString))
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
