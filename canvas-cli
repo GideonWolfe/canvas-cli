@@ -91,14 +91,14 @@ def listAssignmentsTable(courseId):
     assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
     #  print(assignments)
     tableData = []
-    HEADERS=["ID", "Name", "Due Date", "Submitted", "Score"]
+    HEADERS=["ID", "Name", "Due Date", "Status", "Score"]
     for assignment in assignments:
         fullName = assignment['name']
         ID = assignment['id']
         scoreString = Format.formatScore(assignment, False)
-        submitted = Format.formatSubmitted(assignment)
+        status = Format.formatStatus(assignment)
         dueDate = Format.formatDueDate(assignment)
-        tableData.append((ID, fullName, dueDate, submitted, scoreString))
+        tableData.append((ID, fullName, dueDate, status, scoreString))
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
 
 
