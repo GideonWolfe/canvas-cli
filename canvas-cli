@@ -24,6 +24,22 @@ def load_config(config_file):
         except yaml.YAMLError as exc:
             print(exc)
 
+# Returns tuple of (assignmentID, submissionURL)
+def chooseAssignment(courseId):
+    assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
+    idDict = {}
+    HEADERS = ["#", "Name"]
+    tableData = []
+    i = 0
+    for assignment in assignments:
+        idDict.update({i:(assignment['id'], assignment['name'], assignment['submissions_download_url'])})
+        i += 1
+    for num in idDict.keys():
+        tableData.append([num, idDict[num][1]])
+    print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
+    userChoice = int(input("Choose an assignment: "))
+    return((idDict[userChoice][0], idDict[userChoice][2]))
+
 
 # Returns course ID but presents user
 # with human readable course numbers
@@ -112,7 +128,8 @@ def parseArgs():
                       help='If you know the ID of your course, add it here to speed up the search')
     args.add_argument('-summary', action='store_true',
                       help='print a summary of courses')
-
+    args.add_argument('-download', type=str,
+                      help='download either a course file or assignment submission')
     return args.parse_args()
 
 
@@ -144,7 +161,10 @@ def main():
     if args.summary:
         assignmentSummary()
 
-
+    if args.download and args.download == 'submission':
+        chooseAssignment(chooseCourse())
+    if args.download and args.download == 'file':
+        chooseCourse()
 
 if __name__ == "__main__":
     main()
