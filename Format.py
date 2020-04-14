@@ -1,5 +1,6 @@
 import calendar
 import datetime
+import humanfriendly
 
 # ANSI escape sequences to format output
 class bcolors:
@@ -136,5 +137,30 @@ def formatDueDate(assignment):
                 return(f"{bcolors.WARNING}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
     except:
         return("--")
+
+
+
+# Takes an array of table headers and colors them
+def formatHeaders(headers):
+    returnArray = []
+    for header in headers:
+        if header == "Name":
+            returnArray.append(f"{bcolors.BLUE}{bcolors.BOLD}"+header+f"{bcolors.ENDC}")
+        elif header == "#":
+            returnArray.append(f"{bcolors.GREEN}{bcolors.BOLD}"+header+f"{bcolors.ENDC}")
+        elif header == "Size":
+            returnArray.append(f"{bcolors.PURPLE}{bcolors.BOLD}"+header+f"{bcolors.ENDC}")
+        elif header == "Type":
+            returnArray.append(f"{bcolors.LIGHT_BLUE}{bcolors.BOLD}"+header+f"{bcolors.ENDC}")
+        elif header == "Course":
+            returnArray.append(f"{bcolors.CYAN}{bcolors.BOLD}"+header+f"{bcolors.ENDC}")
+        elif "Score" in header or "Grade" in header:
+            returnArray.append(f"{bcolors.LIGHT_CYAN}{bcolors.BOLD}"+header+f"{bcolors.ENDC}")
+        else:
+            returnArray.append(f"{bcolors.LIGHT_BLUE}{bcolors.BOLD}"+header+f"{bcolors.ENDC}")
+
+    return(returnArray)
+
+
 
 

@@ -30,7 +30,7 @@ def load_config(config_file):
 def chooseAssignment(courseId):
     assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
     idDict = {}
-    HEADERS = ["#", "Name"]
+    HEADERS = Format.formatHeaders(["#", "Name"])
     tableData = []
     i = 0
     for assignment in assignments:
@@ -46,7 +46,7 @@ def chooseAssignment(courseId):
 def chooseCourse():
     courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
     tableData = []
-    HEADERS = ["#", "Course"]
+    HEADERS = Format.formatHeaders(["#", "Course"])
     idDict = {}
     i = 0
     for course in courses:
@@ -65,11 +65,10 @@ def chooseCourse():
 def chooseFile():
     files = Fetch.fetchFiles(chooseCourse()[0], canvasDomain, canvasToken)
     tableData = []
-    HEADERS = ["#", "Name", "Size", "Type"]
+    HEADERS = Format.formatHeaders(["#", "Name", "Size", "Type"])
     idDict = {}
     i = 0
     for classFile in files:
-        print(humanfriendly.parse_size(str(classFile['size'])))
         idDict.update({i:(classFile['display_name'], 
                           classFile['url'],
                           humanfriendly.format_size(classFile['size']),
@@ -97,7 +96,7 @@ def listAssignmentsTable(courseId):
     assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
     #  print(assignments)
     tableData = []
-    HEADERS=["Name", "Due Date", "Status", "Score"]
+    HEADERS= Format.formatHeaders(["Name", "Due Date", "Status", "Score"])
     for assignment in assignments:
         fullName = assignment['name']
         ID = assignment['id']
@@ -115,7 +114,7 @@ def listAssignmentsTable(courseId):
 def listAllGrades():
     courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
     tableData = []
-    HEADERS=["Name", "Current Grade", "Current Score", "Final Grade", "Final Score"]
+    HEADERS=Format.formatHeaders(["Name", "Current Grade", "Current Score", "Final Grade", "Final Score"])
     for course in courses:
         fullName = course['name']
         courseId = course['id']
@@ -146,7 +145,7 @@ def listActiveCourses():
 def listActiveCoursesTable():
     courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
     tableData = []
-    HEADERS=["ID", "Name"]
+    HEADERS=Format.formatHeaders(["ID", "Name"])
     for course in courses:
         fullName = course['name']
         courseId = course['id']
