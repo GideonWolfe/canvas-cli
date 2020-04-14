@@ -161,6 +161,16 @@ def formatHeaders(headers):
 
     return(returnArray)
 
+# Takes a filetype from a file and adds an icon
+def formatFileType(filetype):
+    if filetype == "pdf":
+        return(f"{bcolors.LIGHT_GREEN}🗎{bcolors.ENDC} {bcolors.LIGHT_BLUE}PDF{bcolors.ENDC}")
+    elif filetype == "video":
+        return(f"{bcolors.LIGHT_GREEN}⦾{bcolors.ENDC} {bcolors.LIGHT_BLUE}Video{bcolors.ENDC}")
+    elif filetype == "doc":
+        return(f"{bcolors.LIGHT_GREEN}🖺{bcolors.ENDC} {bcolors.LIGHT_BLUE}Document{bcolors.ENDC}")
+    elif filetype == "image":
+        return(f"{bcolors.LIGHT_GREEN}🞖{bcolors.ENDC} {bcolors.LIGHT_BLUE}Image{bcolors.ENDC}")
 
 
 

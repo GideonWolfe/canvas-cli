@@ -72,7 +72,7 @@ def chooseFile():
         idDict.update({i:(classFile['display_name'], 
                           classFile['url'],
                           humanfriendly.format_size(classFile['size']),
-                          classFile['mime_class'])})
+                          Format.formatFileType(classFile['mime_class']))})
         i = i+1
     for num in idDict.keys():
         tableData.append([num, idDict[num][0], idDict[num][2], idDict[num][3]])
