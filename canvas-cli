@@ -75,7 +75,7 @@ def chooseFile():
     for num in idDict.keys():
         tableData.append([num, idDict[num][0]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
-    userChoice = int(input("Choose a course: "))
+    userChoice = int(input("Choose a file: "))
     return(idDict[userChoice][0], idDict[userChoice][1])
 
 
