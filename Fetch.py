@@ -5,7 +5,7 @@ def fetchActiveCourses(canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
     PARAMS = {'enrollment_state':'active',
-              'include': ['course_progress', 'concluded'],
+              'include': ['course_progress', 'concluded', 'total_scores'],
               'exclude_blueprint_courses':'true'}
     coursesRAW = requests.get(url, params=PARAMS, headers=HEADERS)
     courses = coursesRAW.json()
@@ -26,7 +26,8 @@ def fetchAssignments(courseId, canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignments"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
     # PARAMS = {'all_dates': 1, 'include': 'submission'}
-    PARAMS = {'include': ['all_dates', 'submission']}
+    PARAMS = {'include': ['all_dates', 'submission'],
+              'per_page': 50}
     assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     assignments = assignmentsRAW.json()
     return(assignments)
@@ -35,7 +36,8 @@ def fetchAssignments(courseId, canvasDomain, canvasToken):
 def fetchFiles(courseId, canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/files"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
-    filesRAW = requests.get(url, headers=HEADERS)
+    PARAMS = {'per_page': 50}
+    filesRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     files = filesRAW.json()
     return(files)
 
