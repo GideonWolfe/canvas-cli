@@ -39,8 +39,12 @@ def chooseAssignment(courseId):
     for num in idDict.keys():
         tableData.append([num, idDict[num][1]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
-    userChoice = int(input("Choose an assignment: "))
-    return((idDict[userChoice][0], idDict[userChoice][1], idDict[userChoice][2]))
+    userChoice = input("Choose an assignment: ")
+    if userChoice == '':
+        sys.exit()
+    elif int(userChoice) not in idDict.keys():
+        sys.exit()
+    return((idDict[int(userChoice)][0], idDict[int(userChoice)][1], idDict[int(userChoice)][2]))
 
 # Returns tuple of (courseID, courseName, url)
 def chooseCourse():
@@ -58,8 +62,12 @@ def chooseCourse():
     for num in idDict.keys():
         tableData.append([num, idDict[num][1]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
-    userChoice = int(input("Choose a course: "))
-    return((idDict[userChoice][0],idDict[userChoice][1],idDict[userChoice][2]))
+    userChoice = input("Choose a course: ")
+    if userChoice == '':
+        sys.exit()
+    elif int(userChoice) not in list(idDict.keys()):
+        sys.exit()
+    return((idDict[int(userChoice)][0],idDict[int(userChoice)][1],idDict[int(userChoice)][2]))
 
 
 def chooseFile():
@@ -77,8 +85,13 @@ def chooseFile():
     for num in idDict.keys():
         tableData.append([num, idDict[num][0], idDict[num][2], idDict[num][3]])
     print(tabulate(tableData, headers=HEADERS, tablefmt="fancy_grid"))
-    userChoice = int(input("Choose a file: "))
-    return(idDict[userChoice][0], idDict[userChoice][1])
+    userChoice = input("Choose a file: ")
+    if userChoice == '':
+        sys.exit()
+    elif int(userChoice) not in list(idDict.keys()):
+        sys.exit()
+    else:
+        return(idDict[int(userChoice)][0], idDict[int(userChoice)][1])
 
 
 # Prints list of assignments for a given course
