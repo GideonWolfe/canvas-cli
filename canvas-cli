@@ -129,7 +129,6 @@ def listAllGrades():
     tableData = []
     HEADERS=Format.formatHeaders(["Name", "Current Grade", "Current Score", "Final Grade", "Final Score"])
     for course in courses:
-        print(course)
         fullName = course['course_code'] # changed from name cuz it's so long
         courseId = course['id']
         endDate = course['end_at']
