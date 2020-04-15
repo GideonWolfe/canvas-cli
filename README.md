@@ -25,6 +25,6 @@ Here are the current working actions:
  `-summary`
  
  `-download`
-   * file
+   * `file`
     
  `-grades`
