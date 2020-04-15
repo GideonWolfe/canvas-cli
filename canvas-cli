@@ -191,8 +191,10 @@ def parseArgs():
                       help='download either a course file or assignment submission')
     args.add_argument('-open', choices=['course', 'assignment'], type=str,
                       help='Open the page for a course or assignment in a web browser')
-    args.add_argument('-grades', metavar='<courseID> (optional)', type=str,
-                      help='Show grades for all courses or a breakdown for one course')
+    #  args.add_argument('-grades', metavar='<courseID> (optional)', type=str,
+                      #  help='Show grades for all courses or a breakdown for one course')
+    args.add_argument('-grades', action='store_true',
+                      help='print a summary of courses')
     return args.parse_args()
 
 def main():
