@@ -129,7 +129,8 @@ def listAllGrades():
     tableData = []
     HEADERS=Format.formatHeaders(["Name", "Current Grade", "Current Score", "Final Grade", "Final Score"])
     for course in courses:
-        fullName = course['name']
+        print(course)
+        fullName = course['course_code'] # changed from name cuz it's so long
         courseId = course['id']
         endDate = course['end_at']
         ccg = Format.formatCourseScore(course['enrollments'][0]['computed_current_grade'])
