@@ -22,10 +22,9 @@ Here are the current working actions:
   * `courses`
   * `assignments` `<courseid>`
  
- `summary`
+ `-summary`
  
  `-download`
- 
- `-open`
- 
+   * file
+    
  `-grades`
