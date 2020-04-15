@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from ics import Calendar
 import calendar
 import datetime
 import humanfriendly
@@ -46,7 +47,7 @@ def chooseAssignment(courseId):
         sys.exit()
     return((idDict[int(userChoice)][0], idDict[int(userChoice)][1], idDict[int(userChoice)][2]))
 
-# Returns tuple of (courseID, courseName, url)
+# Returns complete course object
 def chooseCourse():
     courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
     tableData = []
@@ -67,11 +68,15 @@ def chooseCourse():
         sys.exit()
     elif int(userChoice) not in list(idDict.keys()):
         sys.exit()
-    return((idDict[int(userChoice)][0],idDict[int(userChoice)][1],idDict[int(userChoice)][2]))
+
+    for course in courses:
+        if course['id'] == idDict[int(userChoice)][0]:
+            return(course)
+
 
 
 def chooseFile():
-    files = Fetch.fetchFiles(chooseCourse()[0], canvasDomain, canvasToken)
+    files = Fetch.fetchFiles(chooseCourse()['id'], canvasDomain, canvasToken)
     tableData = []
     HEADERS = Format.formatHeaders(["#", "Name", "Size", "Type"])
     idDict = {}
@@ -107,7 +112,6 @@ def listAssignments(courseId, summary=False):
 # Prints list of assignments for a given course
 def listAssignmentsTable(courseId):
     assignments = Fetch.fetchAssignments(courseId, canvasDomain, canvasToken)
-    #  print(assignments)
     tableData = []
     HEADERS= Format.formatHeaders(["Name", "Due Date", "Status", "Score"])
     for assignment in assignments:
@@ -177,6 +181,24 @@ def assignmentSummary():
         listAssignments(courses[course], True)
 
 
+def showCalendar(calcurse, courseID=0):
+    if courseID == 0:
+        courseID = chooseCourse()['id']
+    courses = Fetch.fetchActiveCourses(canvasDomain, canvasToken)
+    for course in courses:
+        if course['id'] == courseID:
+             url = course['calendar']['ics']
+    if not url:
+        print("No calendar found")
+
+    c = Calendar(requests.get(url).text.rstrip("\n"))
+
+    if calcurse:
+        with open('course.ics', 'w') as f:
+            f.write(str(c))
+        os.system("calcurse -i course.ics")
+
+
 def parseArgs():
     args = argparse.ArgumentParser(
         description='A light-weight command-line interface for canvas.')
@@ -191,10 +213,10 @@ def parseArgs():
                       help='download either a course file or assignment submission')
     args.add_argument('-open', choices=['course', 'assignment'], type=str,
                       help='Open the page for a course or assignment in a web browser')
-    #  args.add_argument('-grades', metavar='<courseID> (optional)', type=str,
-                      #  help='Show grades for all courses or a breakdown for one course')
     args.add_argument('-grades', action='store_true',
                       help='print a summary of courses')
+    args.add_argument('-calendar', action='store_true',
+                      help='print a calendar')
     return args.parse_args()
 
 def main():
@@ -210,6 +232,7 @@ def main():
 
     canvasDomain = str(conf['default']['canvasdomain'])
     canvasToken = str(conf['default']['canvastoken'])
+    calcurse = str(conf['default']['calcurse'])
 
     args = parseArgs()
 
@@ -218,26 +241,28 @@ def main():
 
     if args.list and args.list == 'assignments':
         if args.courseID:
-            listAssignmentsTable(args.courseID)
+            listAssignmentsTable(int(args.courseID))
         else:
-            listAssignmentsTable(chooseCourse()[0])
+            listAssignmentsTable(chooseCourse2()['id'])
 
     if args.summary:
         assignmentSummary()
 
     if args.download and args.download == 'submission':
-        Fetch.downloadFile(chooseAssignment(chooseCourse()[0]))
+        Fetch.downloadFile(chooseAssignment(chooseCourse()['id']))
     if args.download and args.download == 'file':
         Fetch.downloadFile(chooseFile())
 
     if args.open and args.open == 'assignment':
-        chooseAssignment(chooseCourse()[0])
+        chooseAssignment(chooseCourse()['id'])
     if args.open and args.open == 'course':
         chooseCourse()
 
     if args.grades:
         listAllGrades()
 
+    if args.calendar:
+        showCalendar(calcurse)
 
 
 if __name__ == "__main__":
