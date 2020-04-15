@@ -1,5 +1,7 @@
 # canvas-cli
 
+![Example with wtfutil](/screenshots/wtfutil.png?raw=true "wtfutil example")
+
 ## Configuration
 Go to your `Canvas Account > Settings > Approved Integrations > New Access Token` and copy your token.
 
