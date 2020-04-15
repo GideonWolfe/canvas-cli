@@ -23,3 +23,9 @@ Here are the current working actions:
   * `assignments` `<courseid>`
  
  `summary`
+ 
+ `-download`
+ 
+ `-open`
+ 
+ `-grades`
