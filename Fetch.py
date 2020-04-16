@@ -27,9 +27,11 @@ def fetchAssignments(courseId, canvasDomain, canvasToken):
     HEADERS = {'Authorization': "Bearer "+canvasToken}
     # PARAMS = {'all_dates': 1, 'include': 'submission'}
     PARAMS = {'include': ['all_dates', 'submission'],
-              'per_page': 50}
+              'per_page': 50,
+              'all_dates': 1}
     assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     assignments = assignmentsRAW.json()
+    print(assignments[0])
     return(assignments)
 
 # Returns a JSON array of assignments for a given course
@@ -48,3 +50,14 @@ def downloadFile(classFile):
     filePath = './'+classFile[0]
     with open(filePath, 'wb') as f:
         f.write(response.content)
+
+def fetchAssignmentGroups(courseId, canvasDomain, canvasToken):
+    url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignment_groups"
+    HEADERS = {'Authorization': "Bearer "+canvasToken}
+    PARAMS = {'include': ['assignments', 'all_dates', 'submission'],
+              'per_page': 50,
+              'override_assignment_dates': 0}
+    assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
+    assignmentGroups = assignmentsRAW.json()
+    return(assignmentGroups)
+
