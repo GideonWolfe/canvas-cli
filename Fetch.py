@@ -54,8 +54,7 @@ def downloadFile(classFile):
 def fetchAssignmentGroups(courseId, canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/assignment_groups"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
-    PARAMS = {'include': ['assignments', 'all_dates', 'submission'],
-              'per_page': 50,
+    PARAMS = {'include': ['assignments'],
               'override_assignment_dates': 0}
     assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     assignmentGroups = assignmentsRAW.json()
