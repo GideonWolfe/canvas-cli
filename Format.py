@@ -1,5 +1,5 @@
 import calendar
-import datetime
+from datetime import datetime
 from dateutil import tz
 import humanfriendly
 
@@ -112,16 +112,27 @@ def formatScore(assignment, percentage=False):
 
     return(scoreString)
 
+# convert raw UTC time to localtime.
+def formatFromUTC(dueDateUTC):
+    utc = datetime.strptime(dueDateUTC, '%Y-%m-%dT%H:%M:%SZ')
+
+    from_zone = tz.tzutc()
+    to_zone = tz.tzlocal()
+
+    utc = utc.replace(tzinfo=from_zone)
+
+    local = utc.astimezone(to_zone)
+    return local
+
+# return a human readable date string from the assignment object.
 def formatDueDate(assignment):
     try:
         # Format the input time as UTC
         dueDateRaw = assignment['due_at']
-        utc = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
-        from_zone = tz.tzutc()
-        to_zone = tz.tzlocal()
-        utc = utc.replace(tzinfo=from_zone)
-        dueDateObject = utc.astimezone(to_zone) # Actual due date
-        todayObject = datetime.datetime.now(tz=to_zone)
+
+        dueDateObject = formatFromUTC(dueDateRaw) # Actual due date
+        todayObject = datetime.now(tz=tz.tzlocal())
+
         month = calendar.month_abbr[dueDateObject.month]
         day = str(dueDateObject.day)
         hour = str(dueDateObject.hour)
