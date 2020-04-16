@@ -1,5 +1,6 @@
 import calendar
 import datetime
+from dateutil import tz
 import humanfriendly
 
 # ANSI escape sequences to format output
@@ -113,22 +114,27 @@ def formatScore(assignment, percentage=False):
 
 def formatDueDate(assignment):
     try:
+        # Format the input time as UTC
         dueDateRaw = assignment['due_at']
-        dueDateObject = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
-        todayObject = datetime.datetime.now()
+        utc = datetime.datetime.strptime(dueDateRaw, '%Y-%m-%dT%H:%M:%SZ')
+        from_zone = tz.tzutc()
+        to_zone = tz.tzlocal()
+        utc = utc.replace(tzinfo=from_zone)
+        dueDateObject = utc.astimezone(to_zone) # Actual due date
+        todayObject = datetime.datetime.now(tz=to_zone)
         month = calendar.month_abbr[dueDateObject.month]
         day = str(dueDateObject.day)
         hour = str(dueDateObject.hour)
         minute = str(dueDateObject.minute)
         # assigment already submitted
         if assignment['submission']['submitted_at']:
-            #  return(month+" "+day+", "+hour+":"+minute)
-            return(f"{bcolors.FADED}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
+            return(f"{bcolors.STRIKETHROUGH}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
         # assignment is late
         if assignment['submission']['late']:
             return(f"{bcolors.FAIL}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
         else:
             daysLeft = abs((dueDateObject - todayObject).days)
+            print(daysLeft)
             if daysLeft >= 7:
                 return(f"{bcolors.OKGREEN}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
             elif daysLeft >= 3:
