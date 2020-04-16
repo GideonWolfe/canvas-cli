@@ -28,10 +28,10 @@ def fetchAssignments(courseId, canvasDomain, canvasToken):
     # PARAMS = {'all_dates': 1, 'include': 'submission'}
     PARAMS = {'include': ['all_dates', 'submission'],
               'per_page': 50,
-              'all_dates': 1}
+              'all_dates': 1,
+              'override_assignment_dates': 'false'}
     assignmentsRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     assignments = assignmentsRAW.json()
-    print(assignments[0])
     return(assignments)
 
 # Returns a JSON array of assignments for a given course
