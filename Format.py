@@ -145,7 +145,7 @@ def formatDueDate(assignment):
             return(f"{bcolors.FAIL}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
         else:
             daysLeft = abs((dueDateObject - todayObject).days)
-            print(daysLeft)
+            # print(daysLeft)
             if daysLeft >= 7:
                 return(f"{bcolors.OKGREEN}"+month+" "+day+", "+hour+":"+minute+f"{bcolors.ENDC}")
             elif daysLeft >= 3:
