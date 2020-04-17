@@ -12,6 +12,7 @@ import io
 import sys
 import os
 import argparse
+import tempfile
 import Fetch as Fetch
 import Format as Format
 
@@ -190,13 +191,16 @@ def showCalendar(calcurse, courseID=0):
              url = course['calendar']['ics']
     if not url:
         print("No calendar found")
-
     c = Calendar(requests.get(url).text.rstrip("\n"))
-
+    configDir = tempfile.TemporaryDirectory()
     if calcurse:
         with open('course.ics', 'w') as f:
             f.write(str(c))
-        os.system("calcurse -i course.ics")
+
+        os.system("calcurse --datadir "+configDir.name+" -i course.ics")
+        os.system("calcurse --datadir "+configDir.name)
+        os.system("rm course.ics")
+        configDir.cleanup()
 
 
 def parseArgs():
@@ -263,6 +267,7 @@ def main():
 
     if args.calendar:
         showCalendar(calcurse)
+        #  Fetch.fetchAssignmentGroups(chooseCourse()['id'], canvasDomain, canvasToken)
 
 
 if __name__ == "__main__":
