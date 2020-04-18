@@ -30,3 +30,7 @@ Here are the current working actions:
  `-grades`
  
  `-calendar`
+
+## Dependencies
+
+`calcurse` for viewing calendars in the terminal
