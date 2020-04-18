@@ -20,7 +20,7 @@ Here are the current working actions:
 
 `-list`
   * `courses`
-  * `assignments` `<courseid>`
+  * `assignments` `<-courseID courseid>`
  
  `-summary`
  
