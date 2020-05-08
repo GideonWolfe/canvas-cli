@@ -20,7 +20,7 @@ Here are the current working actions:
 
 `-list`
   * `courses`
-  * `assignments` `<courseid>`
+  * `assignments` `<-courseID courseid>`
  
  `-summary`
  
@@ -28,3 +28,9 @@ Here are the current working actions:
    * `file`
     
  `-grades`
+ 
+ `-calendar`
+
+## Dependencies
+
+`calcurse` for viewing calendars in the terminal
