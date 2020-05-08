@@ -38,7 +38,7 @@ def fetchAssignments(courseId, canvasDomain, canvasToken):
 def fetchFiles(courseId, canvasDomain, canvasToken):
     url = canvasDomain+"api/v1/courses/"+str(courseId)+"/files"
     HEADERS = {'Authorization': "Bearer "+canvasToken}
-    PARAMS = {'per_page': 50}
+    PARAMS = {'per_page': 100}
     filesRAW = requests.get(url, headers=HEADERS, params=PARAMS)
     files = filesRAW.json()
     return(files)
